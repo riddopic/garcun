@@ -227,34 +227,6 @@ class Chef
 
       private #   P R O P R I E T À   P R I V A T A   Vietato L'accesso
 
-      # Handle the download action.
-      #
-      # @return [undefined]
-      #
-      # @api private
-      def do_create
-        if @current_resource.exist? && !access_controls.requires_changes?
-            Chef::Log.debug "#{r.path} already exists - nothing to do"
-
-        elsif @current_resource.exist? && access_controls.requires_changes?
-          converge_by(access_controls.describe_changes) do
-            access_controls.set_all
-          end
-          r.updated_by_last_action(true)
-
-        else
-          converge_by "Download #{r.path}" do
-            backup unless ::File.symlink?(r.path)
-            do_download
-          end
-          do_acl_changes
-          load_resource_attributes_from_file(r)
-          r.updated_by_last_action(true)
-          load_new_resource_state
-          r.exist = true
-        end
-      end
-
       # Change file ownership and mode.
       #
       # @return [undefined]

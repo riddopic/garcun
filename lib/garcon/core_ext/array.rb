@@ -21,7 +21,7 @@ class Array
   # Get or set state of object. You can think of #object_state as an in-code
   # form of marshalling.
   #
-  def object_state(data=nil)
+  def object_state(data = nil)
     data ? replace(data) : dup
   end
 end

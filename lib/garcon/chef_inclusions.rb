@@ -27,7 +27,6 @@ require_relative 'chef/resource/attribute'
 require_relative 'chef/resource/base_dsl'
 require_relative 'chef/resource/blender'
 require_relative 'chef/resource/lazy_eval'
-require_relative 'chef/resource/resource_name'
 
 module Garcon
   # Extend Resource with class and instance methods.
@@ -36,7 +35,6 @@ module Garcon
     include BaseDSL
     include LazyEval
     include Validations
-    include ResourceName
     include Garcon::UrlHelper
     include Garcon::FileHelper
 

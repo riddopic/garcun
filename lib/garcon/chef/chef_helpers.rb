@@ -27,17 +27,15 @@ module Garcon
     include Chef::Mixin::ShellOut
     include Garcon::Exceptions
 
-    # def chef_run_context
-    #   ::Chef::RunContext.new(chef_node, nil, nil)
-    # end
-    #
-    #  TODO - ARE THESE CAUSING TROUBLE???
-    #
-    # def chef_node
-    #   node = ::Chef::Node.new
-    #   node.consume_external_attrs(nil, ohai)
-    #   node
-    # end
+    def chef_run_context
+      ::Chef::RunContext.new(chef_node, nil, nil)
+    end
+
+    def chef_node
+      node = ::Chef::Node.new
+      node.consume_external_attrs(nil, ohai)
+      node
+    end
 
     # Boolean indicating if the given Ruby Gem is installed.
     #

@@ -18,7 +18,6 @@
 #
 
 class Binding
-
   # Returns the call stack, same format as Kernel#caller()
   #
   def caller( skip=0 )

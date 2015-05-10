@@ -18,6 +18,7 @@
 #
 
 # Add #blank? method to TrueClass class.
+#
 class TrueClass
   # True is never blank.
   #
@@ -42,6 +43,7 @@ class TrueClass
 end
 
 # Add #blank? method to FalseClass class.
+#
 class FalseClass
   # False is always blank.
   #

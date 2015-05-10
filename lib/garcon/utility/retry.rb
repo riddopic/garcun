@@ -18,7 +18,6 @@
 #
 
 require_relative 'timeout'
-require_relative '../exceptions'
 
 module Garcon
   # Class methods that are added when you include Garcon::Retry
@@ -26,8 +25,6 @@ module Garcon
   module Retry
     # Methods are also available as module-level methods as well as a mixin.
     extend self
-
-    include Garcon::Exceptions
 
     # Runs a code block, and retries it when an exception occurs. It is
     # configured using four optional parameters `:tries`, `:on`, `:sleep`,

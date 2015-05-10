@@ -25,6 +25,54 @@ module Garcon
     #
     module BaseDSL
       module ClassMethods
+        # Maps a resource/provider (and optionally a platform and version) to a
+        # Chef resource/provider. This allows finer grained per platform
+        # resource attributes and the end of overloaded resource definitions.
+        #
+        # @note
+        #   The provides method must be defined in both the custom resource and
+        #   custom provider files and both files must have identical provides
+        #   statement(s).
+        #
+        # @param [Symbol] name
+        #   Name of a Chef resource/provider to map to.
+        #
+        # @return [undefined]
+        #
+        def provides(name)
+          if self.name && respond_to?(:constantize)
+            old_constantize = instance_method(:constantize)
+            define_singleton_method(:constantize) do |name|
+              name == self.name ? self : old_constantize.bind(self).call(name)
+            end
+          end
+          @provides_name = name
+          super if defined?(super)
+        end
+
+        # Return the Snake case name of the current resource class. If not set
+        # explicitly it will be introspected based on the class name.
+        #
+        # @param [Boolean] auto
+        #   Try to auto-detect based on class name.
+        #
+        # @return [Symbol]
+        #
+        def resource_name(auto = true)
+          return @provides_name if @provides_name
+          @provides_name || if name && name.start_with?('Chef::Resource')
+            Garcon::Inflections.snakeify(name, 'Chef::Resource').to_sym
+          elsif name
+            Garcon::Inflections.snakeify(name.split('::').last).to_sym
+          end
+        end
+
+        # Used by Resource#to_text to find the human name for the resource.
+        #
+        def dsl_name
+          resource_name.to_s
+        end
+
         # Imitate the behavior of the `Chef::Resource::LWRPBase` DSL providing
         # a `default_action` method.
         #
@@ -134,6 +182,11 @@ module Garcon
       #
       def initialize(*args)
         super
+        if self.class.resource_name(false)
+          @resource_name = self.class.resource_name
+        else
+          @resource_name ||= self.class.resource_name
+        end
         @action = self.class.default_action if @action == :nothing
         (@allowed_actions << self.class.actions).flatten!.uniq!
       end
