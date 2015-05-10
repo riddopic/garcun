@@ -18,7 +18,6 @@
 #
 
 require 'thread'
-require_relative '../exceptions'
 
 module Garcon
   # Class methods that are added when you include Garcon::Timeout
@@ -26,8 +25,6 @@ module Garcon
   module Timeout
     # Methods are also available as module-level methods as well as a mixin.
     extend self
-
-    include Garcon::Exceptions
 
     # Wait the given number of seconds for the block operation to complete.
     # Intended to be a simpler and more reliable replacement to the Ruby

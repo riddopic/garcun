@@ -303,9 +303,9 @@ class Chef
 
       def handle_prerequisites
         package 'gnutls', :install
-        yumrepo :create
+        yumrepo(:create) if node.platform_family == 'rhel'
         package 'aria2', :install
-        wipe_repo
+        wipe_repo if node.platform_family == 'rhel'
       end
 
       def package(name, action = :nothing)

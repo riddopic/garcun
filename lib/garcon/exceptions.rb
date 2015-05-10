@@ -62,40 +62,5 @@ module Garcon
         end
       end
     end
-
-    # Raised when errors occur during configuration.
-    ConfigurationError             = Class.new(StandardError)
-
-    # Raised when an object's methods are called when it has not been
-    # properly initialized.
-    InitializationError            = Class.new(StandardError)
-
-    # If the maximum number of ReadWriteLock readers or writers is exceeded.
-    ResourceLimitError             = Class.new(StandardError)
-
-    # Raised by an `Executor` when it is unable to process a given task,
-    # possibly because of a reject policy or other internal error.
-    RejectedExecutionError         = Class.new(StandardError)
-
-    # Raised when an operation times out.
-    TimeoutError                   = Class.new(StandardError)
-    PollingError                   = Class.new(StandardError)
-
-    # Raised when node[:garcon][:databag_type] is not valid.
-    InvalidDataBagTypeError        = Class.new(RuntimeError)
-
-    # Raised when cipher direction is invalid.
-    InvalidCipherError             = Class.new(RuntimeError)
-
-    # Raised when no encryption key password is specified.
-    MissingEncryptionPasswordError = Class.new(RuntimeError)
-
-    ResourceNotFoundError          = Class.new(RuntimeError)
-    InvalidStateError              = Class.new(RuntimeError)
-    InvalidTransitionError         = Class.new(RuntimeError)
-    InvalidCallbackError           = Class.new(RuntimeError)
-    TransitionFailedError          = Class.new(RuntimeError)
-    TransitionConflictError        = Class.new(RuntimeError)
-    GuardFailedError               = Class.new(RuntimeError)
   end
 end

@@ -45,7 +45,8 @@ module Garcon
   #   The mysql_passwd will == 'eazypass'
   #
   module SecretBag
-    include Garcon::Exceptions
+    InvalidDataBagTypeError = Class.new(RuntimeError)
+    DataBagEncryptionError  = Class.new(RuntimeError)
 
     def secret(bag_name, index)
       if node[:garcon][:devmode]

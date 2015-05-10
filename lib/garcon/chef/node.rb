@@ -55,20 +55,22 @@ class Chef
     # not exist, otherwise UndefinedAttributeError is raised.
     #
     # @param [Array<String, Symbol>] keys
-    #   the list of keys to kdeep fetch
+    #   The list of keys to kdeep fetch
     #
     # @yield optional block to execute if no value is found
+    #
+    # @raise UndefinedAttributeError
     #
     # @return [Object]
     #
     # @api public
     def get(*keys, &block)
-      args.reduce(self) do |obj, arg|
+      keys.reduce(self) do |obj, key|
         begin
-          arg = Integer(arg) if obj.is_a? Array
-          obj.fetch(arg)
+          key = Integer(key) if obj.is_a? Array
+          obj.fetch(key)
         rescue ArgumentError, IndexError, NoMethodError
-          break block.call(arg) if block
+          break block.call(key) if block
           raise UndefinedAttributeError
         end
       end
