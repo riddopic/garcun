@@ -171,18 +171,23 @@ module Garcon
       path.sub(%r{^/}, '').tr('', '')
     end
 
+    def atomic_id
+      @atomic_id ||= 0
+      @atomic_id += 1
+    end
+
     # Same as `File.open`, but acts on a temporary copy of named
     # file, copying the file back to the original on completion.
     #
     # @uncommon
     #   require 'facets/fileutils/atomic_open'
     #
-    def self.atomic_open(file_name, mode='r', temp_dir = nil, &block)
+    def atomic_open(file, mode='r', temp_dir = nil, &block)
       temp_dir  = temp_dir || Dir.tmpdir
-      temp_file = Tempfile.new("#{aomtic_id}-" + basename(file_name), temp_dir)
-      FileUtils.cp(file_name, temp_file) if File.exist?(file_name)
-      open(temp_file, mode, &block)
-      FileUtils.cp(temp_file, file_name)
+      temp_file = Tempfile.new("#{aomtic_id}-" + File.basename(file), temp_dir)
+      FileUtils.cp(file, temp_file) if File.exist?(file)
+      File.open(temp_file, mode, &block)
+      FileUtils.cp(temp_file, file)
     end
 
     # Write to a file atomically. Useful for situations where you don't
@@ -199,26 +204,26 @@ module Garcon
     #     file.write("hello")
     #   end
     #
-    def self.atomic_write(file_name, temp_dir = nil)
+    def atomic_write(file, temp_dir = nil)
       temp_dir  = temp_dir || Dir.tmpdir
-      temp_file = Tempfile.new(basename(file_name), temp_dir)
+      temp_file = Tempfile.new(File.basename(file), temp_dir)
 
       yield temp_file
       temp_file.close
 
       begin
-        old_stat = stat(file_name)
+        old_stat = File.stat(file)
       rescue Errno::ENOENT
-        check_name = join(dirname(file_name), ".permissions_check.#{Thread.current.object_id}.#{Process.pid}.#{rand(1000000)}")
-        open(check_name, "w") { }
-        old_stat = stat(check_name)
-        unlink(check_name)
+        ext = "#{Thread.current.object_id}.#{Process.pid}.#{rand(1000000)}"
+        check_name = File.join(File.dirname(file), ".permissions_check.#{ext}")
+        File.open(check_name, "w") { }
+        old_stat = File.stat(check_name)
+        File.unlink(check_name)
       end
 
-      FileUtils.mv(temp_file.path, file_name)
-
-      chown(old_stat.uid, old_stat.gid, file_name)
-      chmod(old_stat.mode, file_name)
+      FileUtils.mv(temp_file.path, file)
+      File.chown(old_stat.uid, old_stat.gid, file)
+      File.chmod(old_stat.mode, file)
     end
 
     # Reads in a file, removes blank lines and removes lines starting
@@ -228,7 +233,7 @@ module Garcon
     # can be a regualar expression or a string that is match against the
     # start of a line.
     #
-    def self.read_list(filepath, options={})
+    def read_list(filepath, options={})
       chomp = options[:chomp]
       omit  = case options[:omit]
               when Regexp

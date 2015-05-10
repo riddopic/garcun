@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-# Add #elapse
 class Time
   # Tracks the elapse time of a code block.
   #

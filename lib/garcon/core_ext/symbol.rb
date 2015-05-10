@@ -18,7 +18,6 @@
 #
 
 class Symbol
-
   # Override this in a child if it cannot be dup'ed
   #
   # @return [Object]

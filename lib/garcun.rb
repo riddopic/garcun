@@ -19,6 +19,4 @@
 
 require_relative 'garcon'
 
-module Garcun
-
-end
+module Garcun; end

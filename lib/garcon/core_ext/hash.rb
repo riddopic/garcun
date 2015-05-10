@@ -18,7 +18,6 @@
 #
 
 class Hash
-
   # Turn a hash into a method arguments.
   #
   #   h = { :list => [1,2], :base => "HI" }
@@ -55,7 +54,7 @@ class Hash
   # Get or set state of object. You can think of #object_state as an in-code
   # form of marshalling.
   #
-  def object_state(data=nil)
+  def object_state(data = nil)
     data ? replace(data) : dup
   end
 

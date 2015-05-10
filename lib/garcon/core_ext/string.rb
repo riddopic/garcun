@@ -17,21 +17,18 @@
 # limitations under the License.
 #
 
-# Adds `#contains?`, `#blank?` and `#shatter` methods to strings
-#
 class String
-
   # Get or set state of object. You can think of #object_state as an in-code
   # form of marshalling.
   #
-  def object_state(data=nil)
+  def object_state(data = nil)
     data ? replace(data) : dup
   end
 
-  # Common Unix cryptography method.
-  # This adds a default salt to the built-in crypt method.
+  # Common Unix cryptography method. This adds a default salt to the built-in
+  # crypt method.
   #
-  def crypt(salt=nil)
+  def crypt(salt = nil)
     salt ||= ((SecureRandom.random_number(26) +
               (SecureRandom.random_number(2) == 0 ? 65 : 97)).chr +
               (SecureRandom.random_number(26) +
@@ -56,7 +53,7 @@ class String
   #
   #   "a?".to_re  #=> /a?/
   #
-  def to_re(esc=false)
+  def to_re(esc = false)
     Regexp.new((esc ? Regexp.escape(self) : self))
   end
 
@@ -66,21 +63,18 @@ class String
   #
   #   "[".to_rx  #=> /\[/
   #
-  def to_rx(esc=true)
+  def to_rx(esc = true)
     Regexp.new((esc ? Regexp.escape(self) : self))
   end
 
   # Strips out whitespace then tests if the string is empty.
   #
-  # @example
-  #   "".blank?        # =>  true
-  #   "      ".blank?  # =>  true
-  #   " sup? ".blank?  # =>  false
+  #   "".blank?         #=>  true
+  #   "     ".blank?    #=>  true
+  #   " hey ho ".blank? #=>  false
   #
   # @return [Boolean]
-  #   True if blank, else false.
   #
-  # @api public
   def blank?
     strip.empty?
   end

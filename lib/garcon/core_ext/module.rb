@@ -18,7 +18,6 @@
 #
 
 class Module
-
   # Create an instance of Object and extend it with +self+.
   #
   #   mod = Module.new do

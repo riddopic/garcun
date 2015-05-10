@@ -30,6 +30,8 @@ module Garcon
   end
 
   class Coercer
+    # Coerces objects based on the definitions that are registered.
+    #
     def initialize
       @coercions = Hash.new do |hash, origin|
         hash[origin] = Hash.new do |h, target|
@@ -101,6 +103,7 @@ module Garcon
     # Calls the coercion.
     #
     # @return [Object]
+    #
     def call(object)
       @block.call(object, @target)
     end

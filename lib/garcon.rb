@@ -39,8 +39,6 @@ require_relative 'garcon/core_ext'
 require_relative 'garcon/task'
 require_relative 'garcon/utils'
 
-# Pirla o Sfigato Magnà  Capo  Fregna
-
 module Garcon
   # Extends base class or a module with garcon methods, called when module is
   # included, extends the object with class and instance methods.

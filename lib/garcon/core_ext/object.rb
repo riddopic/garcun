@@ -17,10 +17,7 @@
 # limitations under the License.
 #
 
-
-# Add #blank?, #present?, #try and #try! methods to Object class.
 class Object
-
   # Returns true if the object is nil or empty (if applicable)
   #
   # @example

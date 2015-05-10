@@ -17,9 +17,7 @@
 # limitations under the License.
 #
 
-# Add #maybe
 module Kernel
-
   # Random generator that returns true or false. Can also take a block that has
   # a 50/50 chance to being executed.
   #

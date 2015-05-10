@@ -18,7 +18,6 @@
 #
 
 class Struct
-
   # Get or set state of object. You can think of #object_state as an in-code
   # form of marshalling.
   #

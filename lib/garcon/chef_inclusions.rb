@@ -18,7 +18,6 @@
 #
 
 require_relative 'chef/chef_helpers'
-require_relative 'chef/log'
 require_relative 'chef/node'
 require_relative 'chef/secret_bag'
 require_relative 'chef/validations'
