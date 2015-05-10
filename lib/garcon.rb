@@ -51,7 +51,7 @@ module Garcon
   def self.included(object)
     super
     if Class === object
-      object.send(:include, ClassInclusions) # TODO fix this...
+      object.send(:include, ClassInclusions)
     else
       object.extend(ModuleExtensions)
     end
