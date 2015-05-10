@@ -135,14 +135,9 @@ unless Chef::Recipe.ancestors.include?(Garcon::Interpolation)
   Chef::Provider.send(:include, Garcon::Interpolation)
 end
 
-unless Chef::Resource.method_defined?(:run_now)
-  Chef::Resource.send(:include, Garcon::RunNow::Mixin)
-end
-
 require_relative 'chef/provider/civilize'
+require_relative 'chef/provider/development'
 require_relative 'chef/provider/download'
 require_relative 'chef/provider/house_keeping'
 require_relative 'chef/provider/node_cache'
-require_relative 'chef/provider/partial'
-require_relative 'chef/provider/recovery'
 require_relative 'chef/provider/zip_file'

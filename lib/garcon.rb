@@ -31,7 +31,6 @@ require 'chef/provider'
 
 require_relative 'garcon/version'
 require_relative 'garcon/configuration'
-require_relative 'garcon/exceptions'
 require_relative 'garcon/inflections'
 require_relative 'garcon/secret'
 require_relative 'garcon/stash/store'

@@ -17,7 +17,6 @@
 # limitations under the License.
 #
 
-require_relative '../exceptions'
 require_relative 'event'
 
 module Garcon

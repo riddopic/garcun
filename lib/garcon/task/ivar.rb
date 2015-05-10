@@ -18,8 +18,6 @@
 #
 
 require 'thread'
-
-require_relative '../exceptions'
 require_relative 'obligation'
 require_relative 'observable'
 
