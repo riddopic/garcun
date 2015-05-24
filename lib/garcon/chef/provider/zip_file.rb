@@ -75,7 +75,7 @@ class Chef
 
       def initialize(new_resource, run_context)
         super
-        require_zip unless defined?(Zip)
+        __zip__ unless defined?(Zip)
       end
 
       # Shortcut to new_resource.
@@ -137,7 +137,7 @@ class Chef
               r.updated_by_last_action(true)
             end
           else
-            Chef::Log.info 'a valid directory must be specified for ziping'
+            Chef::Log.warn 'A valid directory must be specified for ziping.'
           end
         end
       end
@@ -170,17 +170,13 @@ class Chef
       # @return [undefined]
       #
       # @api private
-      def require_zip
-        require 'zip'
+      def __zip__
+        require 'zip' unless defined?(Zip)
       rescue LoadError
-        gem_rubyzip
-        require 'zip'
-      end
-
-      def gem_rubyzip
-        g ||= Chef::Resource::ChefGem.new('rubyzip', run_context)
+        g = Chef::Resource::ChefGem.new('zip', run_context)
         g.compile_time(false) if respond_to?(:compile_time)
-        g.run_action :install
+        g.run_action(:install)
+        require 'zip'
       end
 
       # Cache a file locally in Chef::Config[:file_cache_path].

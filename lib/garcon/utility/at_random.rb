@@ -39,6 +39,14 @@ module Garcon
       end
     end
 
+    # Hook called when module is included, extends a descendant with class
+    # and instance methods.
+    #
+    # @param [Module] descendant
+    #   the module or class including Garcon::Resource::BaseDSL
+    #
+    # @return [self]
+    #
     def self.included(other)
       other.extend(ClassMethods)
     end

@@ -35,26 +35,27 @@ class Chef
       # Attributes
       attribute :name,
         kind_of: String
+      attribute :local,
+        kind_of: [String],
+        default: 'en_US.UTF-8'
       attribute :iptables,
         kind_of: [TrueClass, FalseClass],
-        default: true
+        default: lazy { node[:garcon][:civilize][:iptables] }
       attribute :selinux,
         kind_of: [TrueClass, FalseClass],
-        default: true
+        default: lazy { node[:garcon][:civilize][:selinux] }
       attribute :dotfiles,
         kind_of: [TrueClass, FalseClass, String, Array],
-        default: true
+        default: lazy { node[:garcon][:civilize][:dotfiles] }
       attribute :ruby,
         kind_of: [TrueClass, FalseClass],
-        default: true
+        default: lazy { node[:garcon][:civilize][:ruby] }
       attribute :docker,
         kind_of: Array,
-        default: %w[tar htop initscripts]
+        default: lazy { node[:garcon][:civilize][:docker] }
       attribute :rhel_svcs,
         kind_of: Array,
-        default: %w[
-          autofs avahi-daemon bluetooth cpuspeed cups gpm haldaemon messagebus
-        ]
+        default: lazy { node[:garcon][:civilize][:rhel_svcs] }
     end
   end
 
@@ -86,15 +87,73 @@ class Chef
       end
 
       def action_run
-        civilize_docker if docker? && r.docker
-        rhel_services   if r.rhel_svcs
-        iptables        if !docker? && r.iptables
-        selinux         if selinux? && r.selinux
+        civilize_platform
+        civilize_locale
+        civilize_docker   if docker? && r.docker
+        rhel_services     if r.rhel_svcs
+        iptables          if !docker? && r.iptables
+        selinux           if selinux? && r.selinux
         ps1prompt
         dotfiles        if r.dotfiles
       end
 
       private #        P R O P R I E T À   P R I V A T A   Vietato L'accesso
+
+      def omnibus_updater
+        node.default[:omnibus_updater][:restart_chef_service] = true
+        node.default[:omnibus_updater][:force_latest]         = false
+      end
+
+      def locale
+        case node[:platform_family]
+        when 'debian'
+          e = Chef::Resource::Execute.new('Set locale', run_context)
+          e.command "/usr/sbin/update-locale LANG=#{r.local}"
+          e.not_if { docker? }
+          e.action :run
+        when 'rhel'
+          t ||= Chef::Resource::Template.new('/etc/sysconfig/i18n', run_context)
+          t.cookbook   'garcon'
+          t.owner      'root'
+          t.group      'root'
+          t.mode        00644
+          t.variables   local: r.local
+          e.not_if    { docker? }
+          t.run_action :create
+        end
+      end
+
+      def tattoo!(action)
+        include_recipe 'motd-tail'
+        m = Chef::Resource::Template.new('/etc/motd.tail', run_context)
+        m.template_source 'motd.erb'
+        m.cookbook 'garcon'
+        m.action action
+      end
+
+      def chef_dot_io_repo(action)
+        r = Chef::Resource::PackagecloudRepo.new('/chef/current', run_context)
+        r.type   value_for_platform_family debian: 'deb', rhel: 'rpm'
+        r.action action
+      end
+
+      def civilize_platform
+        case node[:platform]
+        when 'debian'
+          run_context.include_recipe 'apt::default'
+
+        when 'fedora'
+          run_context.include_recipe 'yum-fedora::base'
+
+        when 'centos'
+          run_context.include_recipe 'yum-epel::base'
+          run_context.include_recipe 'yum-centos::base'
+
+        when 'amazon'
+          run_context.include_recipe 'yum-epel::base'
+          run_context.include_recipe 'yum-amazon::base'
+        end
+      end
 
       def civilize_docker
         r.docker.each { |pkg| package pkg }

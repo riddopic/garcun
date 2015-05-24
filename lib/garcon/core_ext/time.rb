@@ -132,14 +132,13 @@ class Time
   #   t.shift(:days=>4, :hours=>3)  # =>  Time.utc(2010,10,14,3,0,0)
   #
   def shift(*time_units)
-    time_hash = Hash===time_units.last ? time_units.pop : {}
-    time_units = time_units.flatten
+    time_hash   = Hash===time_units.last ? time_units.pop : {}
+    time_units  = time_units.flatten
     time_units << :seconds if time_units.size % 2 == 1
-    time_hash.each{ |units, number| time_units << number; time_units << units }
+    time_hash.each { |units, number| time_units << number; time_units << units }
 
     time = self
     time_units.each_slice(2) do |number, units|
-      #next time = time.ago(-number, units) if number < 0
       time = (
         case units.to_s.downcase.to_sym
         when :years, :year

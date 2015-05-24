@@ -57,7 +57,7 @@ class Chef
 
       # Load and return the current resource.
       #
-      # @return [Chef::Provider::Civilize]
+      # @return [Chef::Provider:Development]
       #
       # @api private
       def load_current_resource
@@ -93,6 +93,26 @@ class Chef
         h.run_action :enable
       end
 
+
+      def os_includes
+        case node['platform_family']
+        when 'debian'
+        	include_recipe 'apt'
+      end
+
+      %w(build-essential git).each do |ir|
+        include_recipe ir
+      end
+
+      chef_dk 'my_chef_dk' do
+          version 'latest'
+          global_shell_init true
+          action :install
+      end
+
+      chef_gem 'knife-push'
+
+
       def install_gem(name)
         g ||= Chef::Resource::ChefGem.new(name, run_context)
         g.compile_time(false) if respond_to?(:compile_time)
@@ -110,8 +130,8 @@ end
 # @api private.
 Chef::Platform.set(
   platform: :amazon,
-  resource: :civilize,
-  provider:  Chef::Provider::Civilize
+  resource: :development,
+  provider:  Chef::Provider::Development
 )
 
 # Chef::Platform mapping for resource and providers
@@ -121,8 +141,8 @@ Chef::Platform.set(
 # @api private.
 Chef::Platform.set(
   platform: :centos,
-  resource: :civilize,
-  provider:  Chef::Provider::Civilize
+  resource: :development,
+  provider:  Chef::Provider::Development
 )
 
 # Chef::Platform mapping for resource and providers
@@ -132,8 +152,8 @@ Chef::Platform.set(
 # @api private.
 Chef::Platform.set(
   platform: :oracle,
-  resource: :civilize,
-  provider:  Chef::Provider::Civilize
+  resource: :development,
+  provider:  Chef::Provider::Development
 )
 
 # Chef::Platform mapping for resource and providers
@@ -143,8 +163,8 @@ Chef::Platform.set(
 # @api private.
 Chef::Platform.set(
   platform: :redhat,
-  resource: :civilize,
-  provider:  Chef::Provider::Civilize
+  resource: :development,
+  provider:  Chef::Provider::Development
 )
 
 # Chef::Platform mapping for resource and providers
@@ -154,6 +174,6 @@ Chef::Platform.set(
 # @api private.
 Chef::Platform.set(
   platform: :scientific,
-  resource: :civilize,
-  provider:  Chef::Provider::Civilize
+  resource: :development,
+  provider:  Chef::Provider::Development
 )

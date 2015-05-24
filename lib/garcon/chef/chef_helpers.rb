@@ -69,7 +69,9 @@ module Garcon
     def find_by(type, filter, single = true, &block)
       nodes = []
       env   = node.chef_environment
-      if node.public_send(Inflections.pluralize(type.to_s)).include? filter
+      type  = Inflections.pluralize(type.to_s)
+
+      if node.public_send(type).include? filter
         nodes << node
       end
       if !single || nodes.empty?
@@ -81,7 +83,7 @@ module Garcon
       if block_given?
         nodes.each { |n| yield n }
       else
-        single ? nodes.first : nodes
+        single ? [nodes.first] : nodes
       end
     end
 
@@ -310,13 +312,29 @@ module Garcon
     # Boolean method to check if a command line utility is installed.
     #
     # @param [String] cmd
-    #   the command to find
+    #   The command to find.
     #
     # @return [TrueClass, FalseClass]
-    #   true if the command is found in the path, false otherwise
+    #   true if the command is found in the path.
     #
     def installed?(cmd)
       !Garcon::FileHelper.which(cmd).nil?
+    end
+
+    # Boolean method to check if a package is installed.
+    #
+    # @param [String] pkg
+    #   The package to check for.
+    #
+    # @return [TrueClass, FalseClass]
+    #   True if the package is found in the path.
+    #
+    def pkg_installed?(pkg)
+      if node.platform_family == 'debian'
+        shell_out("dpkg -l #{pkg}").exitstatus == 0 ? true : false
+      elsif node.platform_family == 'rhel'
+        shell_out("rpm -qa | grep #{pkg}").exitstatus == 0 ? true : false
+      end
     end
 
     # @return [String] object inspection

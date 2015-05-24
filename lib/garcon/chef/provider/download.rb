@@ -302,8 +302,10 @@ class Chef
       end
 
       def handle_prerequisites
-        package 'gnutls', :install
-        yumrepo(:create) if node.platform_family == 'rhel'
+        if node.platform_family == 'rhel'
+          package 'gnutls', :install
+          yumrepo(:create)
+        end
         package 'aria2', :install
         wipe_repo if node.platform_family == 'rhel'
       end
@@ -317,9 +319,9 @@ class Chef
 
       def yumrepo(action = :nothing)
         y = Chef::Resource::YumRepository.new('garcon', run_context)
-        y.mirrorlist node[:garcon][:repo][:mirrorlist]
-        y.gpgcheck   node[:garcon][:repo][:gpgcheck]
-        y.gpgkey     node[:garcon][:repo][:gpgkey]
+        y.mirrorlist Repos.mirrorlist
+        y.gpgkey     Repos.gpgkey
+        y.gpgcheck   true
         y.run_action action
       end
 
