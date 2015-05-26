@@ -109,8 +109,7 @@ class Chef
         when 'debian'
           e = Chef::Resource::Execute.new('Set locale', run_context)
           e.command "/usr/sbin/update-locale LANG=#{r.local}"
-          e.not_if { docker? }
-          e.action :run
+          e.action :run unless docker?
         when 'rhel'
           t ||= Chef::Resource::Template.new('/etc/sysconfig/i18n', run_context)
           t.cookbook   'garcon'
@@ -118,8 +117,7 @@ class Chef
           t.group      'root'
           t.mode        00644
           t.variables   local: r.local
-          e.not_if    { docker? }
-          t.run_action :create
+          t.run_action :create unless docker?
         end
       end
 
