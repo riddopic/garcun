@@ -76,7 +76,7 @@ class Chef
       private #        P R O P R I E T À   P R I V A T A   Vietato L'accesso
 
       def chef_handler
-        include_recipe 'chef_handler::default'
+        run_context.include_recipe 'chef_handler::default'
 
         file = ::File.join(node[:chef_handler][:handler_path], 'devreporter.rb')
         f ||= Chef::Resource::CookbookFile.new(file, run_context)
@@ -92,26 +92,6 @@ class Chef
         h.supports    report: true, exception: true
         h.run_action :enable
       end
-
-
-      def os_includes
-        case node['platform_family']
-        when 'debian'
-        	include_recipe 'apt'
-      end
-
-      %w(build-essential git).each do |ir|
-        include_recipe ir
-      end
-
-      chef_dk 'my_chef_dk' do
-          version 'latest'
-          global_shell_init true
-          action :install
-      end
-
-      chef_gem 'knife-push'
-
 
       def install_gem(name)
         g ||= Chef::Resource::ChefGem.new(name, run_context)

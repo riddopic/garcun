@@ -94,7 +94,7 @@ class Chef
         iptables          if !docker? && r.iptables
         selinux           if selinux? && r.selinux
         ps1prompt
-        dotfiles        if r.dotfiles
+        dotfiles          if r.dotfiles
       end
 
       private #        P R O P R I E T À   P R I V A T A   Vietato L'accesso
@@ -104,7 +104,7 @@ class Chef
         node.default[:omnibus_updater][:force_latest]         = false
       end
 
-      def locale
+      def civilize_locale
         case node[:platform_family]
         when 'debian'
           e = Chef::Resource::Execute.new('Set locale', run_context)
@@ -123,35 +123,22 @@ class Chef
         end
       end
 
-      def tattoo!(action)
-        include_recipe 'motd-tail'
-        m = Chef::Resource::Template.new('/etc/motd.tail', run_context)
-        m.template_source 'motd.erb'
-        m.cookbook 'garcon'
-        m.action action
-      end
-
-      def chef_dot_io_repo(action)
-        r = Chef::Resource::PackagecloudRepo.new('/chef/current', run_context)
-        r.type   value_for_platform_family debian: 'deb', rhel: 'rpm'
-        r.action action
-      end
-
       def civilize_platform
         case node[:platform]
-        when 'debian'
+        when 'debian', 'ubuntu'
           run_context.include_recipe 'apt::default'
-
+          run_context.include_recipe 'motd-tail::default'
+          m = Chef::Resource::MotdTail.new('/etc/motd.tail', run_context)
+          m.template_source 'motd.erb'
+          m.action          :create
         when 'fedora'
-          run_context.include_recipe 'yum-fedora::base'
-
+          run_context.include_recipe 'yum-fedora::default'
         when 'centos'
-          run_context.include_recipe 'yum-epel::base'
-          run_context.include_recipe 'yum-centos::base'
-
+          run_context.include_recipe 'yum-epel::default'
+          run_context.include_recipe 'yum-centos::default'
         when 'amazon'
-          run_context.include_recipe 'yum-epel::base'
-          run_context.include_recipe 'yum-amazon::base'
+          run_context.include_recipe 'yum-epel::default'
+          run_context.include_recipe 'yum-amazon::default'
         end
       end
 
