@@ -145,9 +145,7 @@ class Chef
       end
 
       def rhel_services
-        r.rhel_svcs.each do |svc|
-          service(svc) { action [:stop, :disable] }
-        end
+        r.rhel_svcs.each { |svc| service(svc) { action [:stop, :disable] }}
       end
 
       def iptables
