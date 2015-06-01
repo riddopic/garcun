@@ -87,6 +87,7 @@ class Chef
       end
 
       def action_run
+        platform_recipes
         civilize_platform
         civilize_locale
         civilize_docker   if docker? && r.docker
@@ -124,19 +125,10 @@ class Chef
       def civilize_platform
         case node[:platform]
         when 'debian', 'ubuntu'
-          run_context.include_recipe 'apt::default'
           run_context.include_recipe 'motd-tail::default'
           m = Chef::Resource::MotdTail.new('/etc/motd.tail', run_context)
           m.template_source 'motd.erb'
           m.action          :create
-        when 'fedora'
-          run_context.include_recipe 'yum-fedora::default'
-        when 'centos'
-          run_context.include_recipe 'yum-epel::default'
-          run_context.include_recipe 'yum-centos::default'
-        when 'amazon'
-          run_context.include_recipe 'yum-epel::default'
-          run_context.include_recipe 'yum-amazon::default'
         end
       end
 

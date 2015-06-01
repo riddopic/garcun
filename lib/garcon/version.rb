@@ -27,7 +27,7 @@ module Garcon
   module Version
     MAJOR = 0
     MINOR = 0
-    PATCH = 6
+    PATCH = 7
 
     # Returns a version string by joining MAJOR, MINOR, and PATCH with '.'
     #

@@ -66,6 +66,7 @@ class Chef
       end
 
       def action_run
+        platform_recipes
         chef_handler
         install_gem('pry')
         Chef::Recipe.send(:require, 'pry')

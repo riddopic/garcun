@@ -36,6 +36,13 @@ module Garcon
       node
     end
 
+    def platform_recipes
+      case node[:platform]
+      when 'debian', 'ubuntu'
+        run_context.include_recipe 'apt::default'
+      end
+    end
+
     # Boolean indicating if the given Ruby Gem is installed.
     #
     # @param [String] gem
