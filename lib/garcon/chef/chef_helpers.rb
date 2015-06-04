@@ -40,6 +40,8 @@ module Garcon
       case node[:platform]
       when 'debian', 'ubuntu'
         run_context.include_recipe 'apt::default'
+      when 'rhel'
+        run_context.include_recipe 'yum-epel::default'
       end
     end
 
