@@ -163,9 +163,9 @@ class Chef
         users = if r.dotfiles.is_a?(TrueClass)
                   Array('root')
                 elsif r.dotfiles.respond_to?(:to_ary)
-                  users = r.dotfiles
+                  r.dotfiles
                 elsif r.dotfiles.respond_to?(:to_str)
-                  users = Array(r.dotfiles)
+                  Array(r.dotfiles)
                 end
 
         users.each do |user|
