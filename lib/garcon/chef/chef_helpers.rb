@@ -25,6 +25,7 @@ module Garcon
     extend self
 
     include Chef::Mixin::ShellOut
+    include Chef::DSL::IncludeRecipe
 
     def chef_run_context
       ::Chef::RunContext.new(chef_node, nil, nil)

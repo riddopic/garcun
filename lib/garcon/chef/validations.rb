@@ -56,14 +56,14 @@ module Garcon
           false
         end
 
-        # Hook called when module is included, extends a descendant with class
-        # and instance methods.
+        # Hook called when module is included.
         #
         # @param [Module] descendant
-        #   The module or class including Garcon::Resource::Validations
+        #   The including module or class.
         #
         # @return [self]
         #
+        # @api private
         def included(descendant)
           super
           descendant.extend ClassMethods

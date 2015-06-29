@@ -40,6 +40,7 @@ class Chef
 
   class Provider
     class Development < Chef::Provider
+      include Chef::DSL::IncludeRecipe
       include Garcon
 
       # Shortcut to new_resource.

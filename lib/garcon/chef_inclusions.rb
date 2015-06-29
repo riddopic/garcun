@@ -135,6 +135,7 @@ unless Chef::Recipe.ancestors.include?(Garcon::Interpolation)
   Chef::Provider.send(:include, Garcon::Interpolation)
 end
 
+require_relative 'chef/provider/archive'
 require_relative 'chef/provider/civilize'
 require_relative 'chef/provider/development'
 require_relative 'chef/provider/download'

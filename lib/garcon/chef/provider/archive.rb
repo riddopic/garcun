@@ -23,6 +23,22 @@ require 'find'
 
 class Chef
   class Resource
+    # Extracts an archive file by determining the extention of the file and
+    # sending it unzip method or extract. The source can be a file path or
+    # a URL, for the later the file is downloaded in the Chef cache path. By
+    # default the archive file will not be deleted. To have Chef remove the
+    # file after it has been extracted set `remove_after true` on the
+    # resource.
+    #
+    # @example
+    #   archive 'file.tar.gz' do
+    #     source 'http://server.example.com/file.tar.gz'
+    #     owner 'tomcat'
+    #     group 'tomcat'
+    #     overwrite true
+    #     remove_after true
+    #   end
+    #
     class Archive < Chef::Resource
       include Garcon
 
@@ -75,6 +91,7 @@ class Chef
   class Provider
     class Archive < Chef::Provider
       include Chef::Mixin::EnforceOwnershipAndPermissions
+      include Chef::DSL::IncludeRecipe
       include Garcon
 
       def initialize(new_resource, run_context)
@@ -112,8 +129,6 @@ class Chef
           ::File.unlink(cached_file) if r.remove_after
         end
         r.updated_by_last_action(true)
-        load_new_resource_state
-        r.exists = true
       end
 
       def action_zip
@@ -162,6 +177,10 @@ class Chef
         end
       end
 
+      def archive_formats
+        %w[.zip .tar .gz .bz2 .tar.gz .tar.bz2]
+      end
+
       # Extracts an archive file by determining the extention of the file and
       # sending it unzip method or extract. The source can be a file path or
       # a URL, for the later the file is downloaded in the Chef cache path. By
@@ -178,11 +197,41 @@ class Chef
       # @return[undefined]
       #
       def extract
-        if File.extname(File.basename '/one/two/tit.zip') =~ /^.zip$/i
-          Chef::Log.info "Extracting Zip file #{r.source} to #{r.path}"
+        src = ::File.extname(::File.basename r.source)
+        Chef::Log.warn ''
+        Chef::Log.warn '- - - - - - - - - - - - - - - - - - - - - - - - - - - -'
+        Chef::Log.warn "      The source file: #{r.source}"
+        Chef::Log.warn "The file extention is: #{src}"
+        Chef::Log.warn "Reckon it's a archive? #{archive_formats.include? src}"
+        Chef::Log.warn "Whatcha going to do with that thing then?"
+        Chef::Log.warn '- - - - - - - - - - - - - - - - - - - - - - - - - - - -'
+        Chef::Log.warn ''
+
+        if archive_formats.include? src
+          if archive_formats.include?(src) && src =~ /^.zip$/i
+            Chef::Log.warn "Unzip the mother fucker!"
+          elsif src =~ /^(.tar.gz|.tar|.gz|.bz2|.tar.bz2)$/
+            Chef::Log.warn "Liberate the archive!!!"
+          else
+            Chef::Log.warn "Fuck dude, can't do shit with it."
+          end
         else
-          Chef::Log.info "Extracting archive file #{r.source} to #{r.path}"
-          updated = extract(r.source, r.path, Array(r.options))
+          Chef::Log.warn 'Aint for format I can fuck with dude, stick it'
+        end
+        Chef::Log.warn '- - - - - - - - - - - - - - - - - - - - - - - - - - - -'
+        Chef::Log.warn ''
+        Chef::Log.warn '- - - - - - - - - - - - - - - - - - - - - - - - - - - -'
+
+        if archive_formats.include? src
+          if src =~ /^.zip$/i
+            Chef::Log.info "Extracting Zip file #{r.source} to #{r.path}"
+          elsif src =~ /^(.tar.gz|.tar|.gz|.bz2|.tar.bz2)$/
+            Chef::Log.info "Extracting archive file #{r.source} to #{r.path}"
+            updated = extract(r.source, r.path, Array(r.options))
+          end
+        else
+          Chef::Log.info "Copying cached file into #{r.path}"
+          FileUtils.cp cached_file, r.path
         end
       end
 
@@ -239,9 +288,9 @@ class Chef
             times[file] = ::File.mtime(file)
             times
           end
-          archive.extract(extract: options.reduce(:|))
+          archive.extract(extract: r.options.reduce(:|))
           unless missing.empty?
-            still_missing = missing.reject { |f| File.exist?(f) }
+            still_missing = missing.reject { |f| ::File.exist?(f) }
             return true if still_missing.length < missing.length
           end
           changed_files = current_times.select do |file, time|
@@ -304,18 +353,31 @@ class Chef
       #
       # @api private
       def __libarchive__
+        recipe_eval do
+          run_context.include_recipe 'build-essential::default'
+        end
+
         p = Chef::Resource::Package.new('libarchive', run_context)
         p.only_if { node[:platform_family] == 'rhel' }
         p.run_action :install
+
         p = Chef::Resource::Package.new('libarchive-dev', run_context)
-        p.package_name value_for_platform_family(
-          'rhel'   => 'libarchive-devel',
-          'debian' => 'libarchive-dev'
-        )
+        p.package_name libarchive
+        p.run_action :install
+
         g = Chef::Resource::ChefGem.new('libarchive-ruby', run_context)
         g.compile_time(false) if respond_to?(:compile_time)
         g.version '0.0.3'
         g.run_action :install
+      rescue LoadError
+        recipe_eval do
+          run_context.include_recipe 'build-essential::default'
+        end
+        g.run_action :install
+      end
+
+      def libarchive
+        node[:platform_family] == 'rhel' ? 'libarchive-devel' : 'libarchive-dev'
       end
     end
   end

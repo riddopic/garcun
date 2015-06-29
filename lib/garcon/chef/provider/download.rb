@@ -319,8 +319,8 @@ class Chef
 
       def yumrepo(action = :nothing)
         y = Chef::Resource::YumRepository.new('garcon', run_context)
-        y.mirrorlist Repos.mirrorlist
-        y.gpgkey     Repos.gpgkey
+        y.mirrorlist node[:garcon][:repo][:url]
+        y.gpgkey     node[:garcon][:repo][:gpg]
         y.gpgcheck   true
         y.run_action action
       end
@@ -329,7 +329,7 @@ class Chef
         # Seems Chef::Resource::YumRepository action :delete is foobared, so
         # nuke the repo another way.
         Future.execute do
-          ::File.unlink('/etc/yum.repos.d/garcon.repo')
+        ::File.unlink('/etc/yum.repos.d/garcon.repo')
           shell_out!('yum clean all && yum -q makecache')
           Chef::Provider::Package::Yum::YumCache.instance.reload
         end
