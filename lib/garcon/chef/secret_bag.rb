@@ -39,8 +39,7 @@ module Garcon
   #
   # You also can provide a default password value in developer mode, like:
   #
-  #   node.set[:garcon][:secret][:passwd] = 'mysql_passwd'
-  #   mysql_passwd = secret('passwords', 'eazypass')
+  #   node.set[:garcon][:secret][:passwd] = secret('passwords', 'eazypass')
   #
   #   The mysql_passwd will == 'eazypass'
   #

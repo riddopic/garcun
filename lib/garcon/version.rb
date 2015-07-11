@@ -26,8 +26,8 @@ module Garcon
   # Contains information about this gem's version
   module Version
     MAJOR = 0
-    MINOR = 0
-    PATCH = 9
+    MINOR = 1
+    PATCH = 0
 
     # Returns a version string by joining MAJOR, MINOR, and PATCH with '.'
     #

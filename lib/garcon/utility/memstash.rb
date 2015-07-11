@@ -57,11 +57,11 @@ module Garcon
 
     # The maximum sum total number of elements (cache entries) allowed on the
     # disk tier for the cache. If this target is exceeded, eviction occurs to
-    # bring the count within the allowed target. The default value is 1,000. A
+    # bring the count within the allowed target. The default value is 100. A
     # setting of 0 means that no eviction of the cache's entries takes place
     # (infinite size is allowed), and consequently can cause the node to run
     # out of disk space.
-    DEFAULT_MAX_ENTRIES = 1_000
+    DEFAULT_MAX_ENTRIES = 100
 
     # @!attribute [r] :stats
     #   @return [CacheStats] The Cache statistics.

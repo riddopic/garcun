@@ -38,6 +38,12 @@ class Chef
       attribute :local,
         kind_of: [String],
         default: 'en_US.UTF-8'
+      attribute :ps1_root_msg,
+        kind_of: [TrueClass, FalseClass],
+        default: lazy { node[:garcon][:civilize][:ps1_root_msg] }
+      attribute :ps1_usr_msg,
+        kind_of: [TrueClass, FalseClass],
+        default: lazy { node[:garcon][:civilize][:ps1_usr_msg] }
       attribute :iptables,
         kind_of: [TrueClass, FalseClass],
         default: lazy { node[:garcon][:civilize][:iptables] }
@@ -122,7 +128,7 @@ class Chef
           t.run_action :create unless docker?
         end
       end
-
+# Garçon
       def civilize_platform
         case node[:platform]
         when 'debian', 'ubuntu'
@@ -156,7 +162,7 @@ class Chef
         t.owner      'root'
         t.group      'root'
         t.mode        00644
-        t.variables   version: ver
+        t.variables   ps1_root_msg: r.ps1_root_msg, ps1_usr_msg: r.ps1_usr_msg
         t.run_action :create
       end
 
