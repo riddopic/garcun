@@ -128,7 +128,7 @@ class Chef
           t.run_action :create unless docker?
         end
       end
-# Garçon
+
       def civilize_platform
         case node[:platform]
         when 'debian', 'ubuntu'

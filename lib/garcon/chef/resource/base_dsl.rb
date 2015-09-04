@@ -41,13 +41,13 @@ module Garcon
         #
         def provides(name)
           if self.name && respond_to?(:constantize)
-            old_constantize = instance_method(:constantize)
-            define_singleton_method(:constantize) do |name|
+            old_constantize = instance_method :constantize
+            define_singleton_method :constantize do |name|
               name == self.name ? self : old_constantize.bind(self).call(name)
             end
           end
           @provides_name = name
-          super if defined?(super)
+          super if defined? super
         end
 
         # Return the Snake case name of the current resource class. If not set
@@ -161,6 +161,7 @@ module Garcon
             set_or_return(name, arg, opts)
           end
         end
+        alias_method :property, :attribute
 
         # Hook called when module is included, extends a descendant with class
         # and instance methods.
